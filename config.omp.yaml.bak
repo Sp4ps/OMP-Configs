@@ -1,0 +1,192 @@
+final_space: true
+version: 2
+blocks:
+  - type: prompt # first line left
+    alignment: left
+    segments:
+      - type: shell # shell segment
+        foreground: "#01ff2b"
+        properties:
+          mapped_shell_names:
+            bash: "󱆃 bash"
+            pwsh: " PS"
+        template: "╭\u2500 {{.Name}} "
+      - type : root # root segment
+        foreground: "#ffd000"
+        template: " \ue691"
+      - type: session # session segment
+        foreground: "#01ff2b"
+        template: "{{if .Root}} <#ffd000>{{.UserName}}</>@{{ .HostName }} {{else}}  {{.UserName}}@{{ .HostName }} {{end}}"
+      - type: git
+        foreground_templates:
+          - "{{ if or (.Working.Changed) (.Staging.Changed) }}#ffeb95{{ end }}"
+          - "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#c5e478{{ end }}"
+          - "{{ if gt .Ahead 0 }}#C792EA{{ end }}"
+          - "{{ if gt .Behind 0 }}#C792EA{{ end }}"
+        foreground: "#070703"
+        properties:
+          branch_icon: "\ue725 "
+          fetch_status: true
+          fetch_upstream_icon: true
+        template: "<#01ff2b></> {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#ef5350> \uf046 {{ .Staging.String }}</>{{ end }} <#01ff2b></>"
+      - type: os
+        foreground: "#01ff2b"
+        properties:
+          linux: <#ffbb00></>
+          macos: <#f1f2ed></>
+          windows: <#357ec7></>
+          arch: <#1793d1></>
+          raspbian: <#E30b5d></>
+          fedora: <#0B57A4></>
+          mint: <#3EB489>󰣭</>
+          ubuntu: <#E95420></>
+          manjaro: <#34be5b></>
+          opensuse: <#73ba25></>
+          redhat: <#cc0000></>
+          debian: <#D70a53></>
+        template: " {{ if .WSL }}WSL at {{ end }}{{.Icon}} "
+
+      - type: node
+        foreground: "#3C873A"
+        properties:
+          fetch_package_manager: true
+          npm_icon: " <#cc3a3a>\ue5fa</> "
+          yarn_icon: " <#348cba>\ue6a7</>"
+        template: "\ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}"
+      - type: python
+        foreground: "#306998"
+        template: "<#FFE873>\ue235</> {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}"
+      - type: java
+        foreground: "#0e8ac8"
+        template: "<#ffffff>\ue738</> {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+      - type: dotnet
+        foreground: "#0d6da8"
+        template: "\ue77f {{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }}"
+      - type: go
+        foreground: "#06aad5"
+        template: "\ue626 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+      - type: rust
+        foreground: "#b86434"
+        template: "\ue7a8 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+      - type: dart
+        foreground: "#0182e6"
+        template: "\ue798 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+      - type: angular
+        foreground: "#ce092f"
+        template: "\ue753 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+      - type: nx
+        foreground: "#ffffff"
+        template: "{{ if .Error }}{{ .Error }}{{ else }}Nx {{ .Full }}{{ end }}"
+      - type: julia
+        foreground: "#359a25"
+        template: "<#ca3c34>\ue624</> {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+      - type: ruby
+        foreground: "#ffffff"
+        template: "<#ce0e00>\ue791</> {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+      - type: azfunc
+        foreground: "#5398c2"
+        template: "\uf104<#f5bf45>\uf0e7</>\uf105 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+      - type: aws
+        foreground: "#faa029"
+        template: "\ue7ad {{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
+      - type: kubectl
+        foreground: "#316ce4"
+        template: "\uf308 {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}"
+
+
+
+
+  - type: prompt
+    alignment: right
+    segments:
+      - type: status
+        foreground: "#01ff2b"
+        foreground_templates:
+          - "{{ if .Error }}#ff0000{{ end }}"
+        template: "{{if .Error}}  {{else}} 󰸞 {{end}}"
+        properties:
+          always_enabled: true
+      - type: executiontime
+        foreground: "#ffffff"
+        properties:
+          style: roundrock
+          threshold: 0
+        template: " 󱫑 {{ .FormattedMs }}\u2800"
+      - type: time
+        foreground: "#ffffff"
+        properties:
+          time_format: "15:04:05"
+        template: " 󰅐 {{ .CurrentDate | date .Format }}"
+      - type: connection
+        foreground: "#1fb4be"
+        template: " <#ffffff></>{{if eq .Type \"ethernet\"}} 󰈁 {{else if eq .Type \"wifi\"}} 󰖩 {{else}} 󰲜 {{end}}<#ffffff></>"
+      - type: battery
+        foreground_templates:
+          - "{{if eq \"Charging\" .State.String}}#b8e994{{end}}"
+          - "{{if eq \"Discharging\" .State.String}}#fff34e{{end}}"
+          - "{{if eq \"Full\" .State.String}}#33DD2D{{end}}"
+          - "{{ if gt .Percentage 25 }}#f44336{{ end }}"
+        powerline_symbol: "\ue0b2"
+        properties:
+          charged_icon: "󰁹 "
+          discharging_icon: "󰁾 "
+          charging_icon: " "
+          not_charging_icon: "󰂃 "
+        template: " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}\uf295 "
+
+
+  - type: prompt
+    alignment: left
+    newline: true
+    segments:
+    - foreground: "#01ff2b" # cmd leading lines vertical
+      style: plain
+      template: "\u2502"
+      type: text
+    - type: path # path segment (Non Root)
+      foreground: "#ffae19"
+      properties:
+        exclude_folders:
+          - C:/
+          - /
+        style: agnoster
+        home_icon: "\uf015"
+        folder_icon: ""
+        folder_separator_icon: " \ue0bb "
+      template: "   \uf07b\uea9c {{ if not .Writable }}<#ff0000>{{ .Path }} 󱙃</>{{else}}{{ .Path }}{{ end }}"
+    - type: path # path segment (Root)
+      foreground: "#ffae19"
+      properties:
+        include_folders:
+          - C:/
+          - /
+        style: agnoster
+        home_icon: "\uf015"
+        folder_icon: ""
+        folder_separator_icon: " "
+      template: "   󰋊\uea9c {{ .Path }}"
+
+  - type: prompt
+    alignment: right
+    segments:
+      - type: sysinfo
+        foreground: "#ffffff"
+        template: "  {{ round .PhysicalPercentUsed .Precision }}% ({{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1048576.0) }} of {{ (div .PhysicalTotalMemory 1048576.0) }}MB) "
+        properties:
+          precision: 3
+
+
+  - type: prompt
+    alignment: left
+    newline: true
+    segments:
+      - foreground: "#01ff2b" # cmd leading lines
+        style: plain
+        template: "\u2570\u2500\ue602"
+        type: text
+      - foreground: "#ffae19" # prompt
+        style: plain
+        template: "󰁔"
+        type: status
+        properties:
+          always_enabled: true
